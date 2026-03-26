@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block title %}Admin Panel — NexBid{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Admin Panel</h1>
+    <p class="page-subtitle">System management & oversight</p>
+  </div>
+  <span class="badge badge-admin" style="font-size:0.75rem;padding:0.4rem 1rem;">⬡ Administrator</span>
+</div>
+
+<!-- Stats Grid -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-card-icon">👥</div>
+    <div class="stat-card-value">{{ users | length }}</div>
+    <div class="stat-card-label">Total Users</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-icon">🏷️</div>
+    <div class="stat-card-value">{{ items | length }}</div>
+    <div class="stat-card-label">Total Listings</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-icon">⚡</div>
+    <div class="stat-card-value">{{ active_auctions }}</div>
+    <div class="stat-card-label">Active Auctions</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card-icon">◎</div>
+    <div class="stat-card-value">{{ total_bids }}</div>
+    <div class="stat-card-label">Total Bids</div>
+  </div>
+</div>
+
+<!-- Users Table -->
+<div style="margin-bottom:2rem;">
+  <h2 style="margin-bottom:1rem;font-size:1.1rem;display:flex;align-items:center;gap:0.5rem;">
+    👥 User Accounts
+  </h2>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Joined</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td style="opacity:0.4;font-family:var(--font-mono);font-size:0.75rem;">#{{ user.id }}</td>
+          <td><strong>{{ user.username }}</strong></td>
+          <td style="opacity:0.7;">{{ user.email }}</td>
+          <td><span class="badge badge-{{ user.role }}">{{ user.role | upper }}</span></td>
+          <td style="font-size:0.75rem;opacity:0.5;">{{ user.created_at[:10] }}</td>
+          <td>
+            {% if user.role != 'admin' %}
+            <form method="POST" action="{{ url_for('admin_toggle_user', user_id=user.id) }}" style="display:inline;">
+              <button type="submit" class="btn btn-outline btn-sm" title="Toggle seller/bidder">
+                {{ 'Make Seller' if user.role == 'bidder' else 'Make Bidder' }}
+              </button>
+            </form>
+            {% else %}
+            <span style="opacity:0.3;font-size:0.75rem;">—</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Items Table -->
+<div>
+  <h2 style="margin-bottom:1rem;font-size:1.1rem;">🏷️ All Listings</h2>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Title</th><th>Seller</th><th>Starting</th><th>Current</th><th>Status</th><th>Expires</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        {% for item in items %}
+        <tr>
+          <td style="opacity:0.4;font-family:var(--font-mono);font-size:0.75rem;">#{{ item.id }}</td>
+          <td>
+            <a href="{{ url_for('item_detail', item_id=item.id) }}" style="color:#a5b4fc;text-decoration:none;font-weight:600;">
+              {{ item.title[:35] }}{% if item.title | length > 35 %}...{% endif %}
+            </a>
+          </td>
+          <td style="opacity:0.7;">{{ item.seller_name }}</td>
+          <td>₹{{ '%.2f' % item.starting_price }}</td>
+          <td style="font-weight:700;color:white;">₹{{ '%.2f' % item.current_price }}</td>
+          <td><span class="badge badge-{{ item.status }}">{{ item.status | upper }}</span></td>
+          <td style="font-size:0.75rem;opacity:0.5;">{{ item.expires_at[:16] }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('admin_delete_item', item_id=item.id) }}" style="display:inline;">
+              <button type="submit" class="btn btn-danger btn-sm"
+                data-confirm="Are you sure you want to delete '{{ item.title }}'? This cannot be undone.">
+                Delete
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

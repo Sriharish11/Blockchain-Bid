@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — NexBid{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Live Auctions</h1>
+    <p class="page-subtitle">{{ items | length }} active auction{{ 's' if items | length != 1 else '' }} • Real-time bidding</p>
+  </div>
+  {% if session.get('role') in ['seller', 'admin'] %}
+  <a href="{{ url_for('list_item') }}" class="btn btn-primary">＋ List Item</a>
+  {% endif %}
+</div>
+
+{% if items %}
+<div class="auction-grid">
+  {% for item in items %}
+  <div class="auction-card">
+    <div class="card-img">
+      {% if item.image_url %}
+      <img src="{{ item.image_url }}" alt="{{ item.title }}" class="auction-img">
+      {% else %}
+      🏷️
+      {% endif %}
+    </div>
+    <div class="card-body">
+      <div class="card-category">Auction #{{ item.id }}</div>
+      <h3 class="card-title">{{ item.title }}</h3>
+      <p class="card-seller">Listed by <strong>{{ item.seller_name }}</strong></p>
+      <div class="card-price-row">
+        <div>
+          <div class="card-price-label">Current Bid</div>
+          <div class="card-price"><sup>₹</sup>{{ '%.2f' % item.current_price }}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="card-price-label">Ends in</div>
+          <div class="card-timer" data-expires="{{ item.expires_at }}">Loading...</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a href="{{ url_for('item_detail', item_id=item.id) }}" class="btn btn-primary btn-sm" style="width:100%;justify-content:center;">
+        View & Bid →
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% else %}
+<div style="text-align:center;padding:6rem 2rem;" class="glass-card">
+  <div style="font-size:4rem;margin-bottom:1rem;">🏷️</div>
+  <h2 style="margin-bottom:0.5rem;opacity:0.7;">No Active Auctions</h2>
+  <p style="color:rgba(255,255,255,0.4);font-size:0.9rem;">Check back soon or list an item yourself.</p>
+  {% if session.get('role') in ['seller', 'admin'] %}
+  <a href="{{ url_for('list_item') }}" class="btn btn-primary" style="margin-top:1.5rem;">＋ List Your First Item</a>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

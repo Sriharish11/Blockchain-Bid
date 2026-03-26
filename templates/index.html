@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-Auction — Secure Online Bidding Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="landing-body">
+
+<!-- Animated background particles -->
+<div class="bg-animation">
+  <div class="particle" style="--delay:0s;--x:10%;--y:20%"></div>
+  <div class="particle" style="--delay:1s;--x:80%;--y:15%"></div>
+  <div class="particle" style="--delay:2s;--x:55%;--y:70%"></div>
+  <div class="particle" style="--delay:3s;--x:25%;--y:80%"></div>
+  <div class="particle" style="--delay:1.5s;--x:90%;--y:60%"></div>
+  <div class="particle" style="--delay:2.5s;--x:40%;--y:30%"></div>
+</div>
+
+<!-- Grid overlay -->
+<div class="grid-overlay"></div>
+
+<div class="landing-container">
+
+  <!-- TOP NAV -->
+  <nav class="landing-nav">
+    <div class="nav-logo">
+      <span class="logo-icon">⬡</span>
+      <span class="logo-text">NEXBID</span>
+    </div>
+    <div class="nav-links">
+      <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+      <a href="{{ url_for('signup') }}" class="nav-link">Register</a>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <main class="hero-section">
+
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      <span>Live Auctions Active Now</span>
+    </div>
+
+    <h1 class="hero-title">
+      <span class="title-line-1">Secure</span>
+      <span class="title-line-2">E-Auction</span>
+      <span class="title-line-3">Platform</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      Blockchain-verified bids. Real-time bidding. Tamper-proof ledger.<br>
+      The future of transparent online auctions.
+    </p>
+
+    <!-- STATS ROW -->
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-number">2.4K+</div>
+        <div class="stat-label">Active Listings</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-number">18K+</div>
+        <div class="stat-label">Verified Bidders</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-number">₹35Cr+</div>
+        <div class="stat-label">Total Volume</div>
+      </div>
+    </div>
+
+    <!-- PORTAL BUTTONS -->
+    <div class="portal-buttons">
+      <a href="{{ url_for('admin_dashboard') }}" class="btn-portal btn-admin">
+        <span class="btn-icon">⬡</span>
+        <div class="btn-text">
+          <span class="btn-label">Admin Portal</span>
+          <span class="btn-sublabel">System Management</span>
+        </div>
+        <span class="btn-arrow">→</span>
+      </a>
+
+      <a href="{{ url_for('login') }}" class="btn-portal btn-ghost">
+        <span class="btn-icon">◎</span>
+        <div class="btn-text">
+          <span class="btn-label">User Login</span>
+          <span class="btn-sublabel">Access Dashboard</span>
+        </div>
+        <span class="btn-arrow">→</span>
+      </a>
+
+      <a href="{{ url_for('dashboard') }}" class="btn-portal btn-ghost">
+        <span class="btn-icon">◈</span>
+        <div class="btn-text">
+          <span class="btn-label">E-Auction</span>
+          <span class="btn-sublabel">Browse & Bid</span>
+        </div>
+        <span class="btn-arrow">→</span>
+      </a>
+    </div>
+
+  </main>
+
+  <!-- FEATURE CARDS -->
+  <section class="features-row">
+    <div class="feature-card glass-card">
+      <div class="feature-icon">🔐</div>
+      <h3>Cryptographic Security</h3>
+      <p>Every bid hashed with SHA-256 and chained to a public ledger. No tampering possible.</p>
+    </div>
+    <div class="feature-card glass-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Real-Time Bidding</h3>
+      <p>Live countdown timers and instant bid validation. Stay ahead of the competition.</p>
+    </div>
+    <div class="feature-card glass-card">
+      <div class="feature-icon">🏆</div>
+      <h3>Fair Trade Guarantee</h3>
+      <p>Immutable transaction records ensure every auction outcome is verifiable and trustworthy.</p>
+    </div>
+  </section>
+
+  <footer class="landing-footer">
+    <p>© 2024 NexBid — Secure Online E-Auction System &nbsp;|&nbsp; Built with Flask &amp; SQLite</p>
+  </footer>
+
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

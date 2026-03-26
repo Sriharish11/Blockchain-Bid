@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login — NexBid</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Space+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="bg-animation">
+  <div class="particle" style="--delay:0s;--x:20%;--y:30%"></div>
+  <div class="particle" style="--delay:2s;--x:75%;--y:60%"></div>
+</div>
+<div class="grid-overlay"></div>
+
+<div class="auth-page">
+  <a href="{{ url_for('index') }}" class="auth-back">← Back to Home</a>
+
+  <div class="form-container">
+    <div style="font-size:2.5rem;margin-bottom:1rem;text-align:center;">⬡</div>
+    <h1 class="form-title" style="text-align:center;">Welcome Back</h1>
+    <p class="form-subtitle" style="text-align:center;">Sign in to your NexBid account</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <input type="text" name="username" class="form-control" placeholder="Enter username" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" placeholder="Enter password" required>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:0.85rem;">
+        Sign In →
+      </button>
+    </form>
+
+    <div class="form-footer">
+      Don't have an account? <a href="{{ url_for('signup') }}">Create one</a>
+      <br><br>
+      <small style="color:rgba(255,255,255,0.2);">Admin: admin / admin123</small>
+    </div>
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

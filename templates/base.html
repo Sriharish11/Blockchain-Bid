@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}NexBid{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="bg-animation">
+  <div class="particle" style="--delay:0s;--x:5%;--y:30%"></div>
+  <div class="particle" style="--delay:2s;--x:85%;--y:20%"></div>
+  <div class="particle" style="--delay:4s;--x:60%;--y:80%"></div>
+</div>
+<div class="grid-overlay"></div>
+
+<div class="app-layout" style="position:relative;z-index:1;">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <span>⬡</span> NEX<span style="color:white">BID</span>
+    </div>
+
+    <span class="sidebar-section-title">Navigation</span>
+    <a href="{{ url_for('dashboard') }}" class="sidebar-link {% if request.endpoint == 'dashboard' %}active{% endif %}">
+      <span class="sidebar-icon">⊞</span> Dashboard
+    </a>
+    <a href="{{ url_for('public_ledger') }}" class="sidebar-link {% if request.endpoint == 'public_ledger' %}active{% endif %}">
+      <span class="sidebar-icon">⛓</span> Public Ledger
+    </a>
+    <a href="{{ url_for('my_bids') }}" class="sidebar-link {% if request.endpoint == 'my_bids' %}active{% endif %}">
+      <span class="sidebar-icon">◎</span> My Bids
+    </a>
+
+    {% if session.get('role') in ['seller', 'admin'] %}
+    <span class="sidebar-section-title">Seller</span>
+    <a href="{{ url_for('list_item') }}" class="sidebar-link {% if request.endpoint == 'list_item' %}active{% endif %}">
+      <span class="sidebar-icon">＋</span> List Item
+    </a>
+    {% endif %}
+
+    {% if session.get('role') == 'admin' %}
+    <span class="sidebar-section-title">Admin</span>
+    <a href="{{ url_for('admin_dashboard') }}" class="sidebar-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}">
+      <span class="sidebar-icon">⬡</span> Admin Panel
+    </a>
+    {% endif %}
+
+    <div class="sidebar-user">
+      <div class="sidebar-user-name">{{ session.get('username', 'Guest') }}</div>
+      <div class="sidebar-user-role role-{{ session.get('role', 'bidder') }}">{{ session.get('role', 'bidder') | upper }}</div>
+      <a href="{{ url_for('logout') }}" style="color:#fca5a5;font-size:0.75rem;text-decoration:none;font-weight:600;display:block;margin-top:0.5rem;">Sign Out →</a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

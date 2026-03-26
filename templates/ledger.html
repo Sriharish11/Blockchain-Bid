@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}Public Ledger — NexBid{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>⛓ Public Ledger</h1>
+    <p class="page-subtitle">Immutable bid records — tamper-proof via SHA-256 hash chaining</p>
+  </div>
+</div>
+
+<div class="glass-card" style="padding:1.5rem;margin-bottom:2rem;border-left:4px solid rgba(79,70,229,0.7);">
+  <div style="display:flex;align-items:flex-start;gap:1rem;">
+    <div style="font-size:1.5rem;">🔐</div>
+    <div>
+      <div style="font-weight:700;margin-bottom:0.3rem;">How This Works</div>
+      <div style="font-size:0.82rem;color:rgba(255,255,255,0.6);line-height:1.7;">
+        Each bid generates a unique <strong>SHA-256 Hash ID</strong> computed from the item ID, bidder ID, amount, and the previous bid's hash.
+        This creates an unbreakable chain — modifying any historical record would invalidate all subsequent hashes, making fraud immediately detectable.
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if entries %}
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Hash ID</th>
+        <th>Item</th>
+        <th>Bidder</th>
+        <th>Amount</th>
+        <th>Prev Hash</th>
+        <th>Timestamp (UTC)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entry in entries %}
+      <tr>
+        <td style="opacity:0.4;font-family:var(--font-mono);font-size:0.75rem;">{{ entry.id }}</td>
+        <td class="hash-cell" title="{{ entry.hash_id }}">{{ entry.hash_id[:20] }}...</td>
+        <td>
+          <a href="{{ url_for('item_detail', item_id=entry.item_id) }}" style="color:#a5b4fc;text-decoration:none;font-weight:600;">
+            {{ entry.title[:30] }}{% if entry.title | length > 30 %}...{% endif %}
+          </a>
+        </td>
+        <td><strong>{{ entry.username }}</strong></td>
+        <td style="font-weight:800;color:white;font-size:0.95rem;">₹{{ '%.2f' % entry.amount }}</td>
+        <td>
+          <span style="font-family:var(--font-mono);font-size:0.65rem;color:rgba(255,255,255,0.3);" title="{{ entry.prev_hash }}">
+            {{ entry.prev_hash[:16] if entry.prev_hash != 'GENESIS' else '─ GENESIS ─' }}{{ '...' if entry.prev_hash != 'GENESIS' else '' }}
+          </span>
+        </td>
+        <td style="font-family:var(--font-mono);font-size:0.72rem;opacity:0.5;">{{ entry.timestamp[:19] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div style="text-align:center;padding:5rem;" class="glass-card">
+  <div style="font-size:3rem;margin-bottom:1rem;">⛓</div>
+  <h3 style="opacity:0.6;">No Ledger Entries Yet</h3>
+  <p style="font-size:0.85rem;color:rgba(255,255,255,0.4);margin-top:0.5rem;">Bid entries will appear here once auctions begin.</p>
+</div>
+{% endif %}
+{% endblock %}

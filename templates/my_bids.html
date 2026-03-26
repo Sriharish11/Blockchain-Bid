@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block title %}My Bids — NexBid{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>My Bids</h1>
+    <p class="page-subtitle">Your bidding activity across all auctions</p>
+  </div>
+</div>
+
+{% if bids %}
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr><th>Item</th><th>My Bid</th><th>Current Price</th><th>Status</th><th>Ends At</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      {% for bid in bids %}
+      <tr>
+        <td><strong>{{ bid.title }}</strong></td>
+        <td style="font-weight:700;color:white;">₹{{ '%.2f' % bid.amount }}</td>
+        <td>
+          ₹{{ '%.2f' % bid.current_price }}
+          {% if bid.amount == bid.current_price and bid.status == 'active' %}
+          <span class="badge badge-active" style="margin-left:0.3rem;font-size:0.55rem;">Leading</span>
+          {% elif bid.amount < bid.current_price %}
+          <span class="badge badge-closed" style="margin-left:0.3rem;font-size:0.55rem;">Outbid</span>
+          {% endif %}
+        </td>
+        <td><span class="badge badge-{{ bid.status }}">{{ bid.status | upper }}</span></td>
+        <td>
+          {% if bid.status == 'active' %}
+          <span class="card-timer" data-expires="{{ bid.expires_at }}" style="font-size:0.78rem;">Loading...</span>
+          {% else %}
+          <span style="opacity:0.4;font-size:0.78rem;">Closed</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{{ url_for('item_detail', item_id=bid.item_id) }}" class="btn btn-outline btn-sm">View →</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div style="text-align:center;padding:5rem;" class="glass-card">
+  <div style="font-size:3rem;margin-bottom:1rem;">◎</div>
+  <h3 style="opacity:0.6;">No Bids Placed Yet</h3>
+  <p style="font-size:0.85rem;color:rgba(255,255,255,0.4);margin-top:0.5rem;">Browse the auction dashboard and place your first bid!</p>
+  <a href="{{ url_for('dashboard') }}" class="btn btn-primary" style="margin-top:1.5rem;">Browse Auctions →</a>
+</div>
+{% endif %}
+{% endblock %}

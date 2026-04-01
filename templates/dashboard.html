@@ -12,6 +12,17 @@
   {% endif %}
 </div>
 
+<!-- Category Filters -->
+<div style="margin-bottom: 2rem; overflow-x: auto; white-space: nowrap; padding-bottom: 0.5rem; display: flex; gap: 0.8rem;">
+    {% for cat in categories %}
+    <a href="{{ url_for('dashboard', category=cat) }}" 
+       class="btn {% if current_category == cat %}btn-primary{% else %}btn-outline{% endif %}" 
+       style="padding: 0.5rem 1.2rem; border-radius: 20px; text-decoration: none; font-size: 0.85rem; flex-shrink: 0;">
+       {{ cat }}
+    </a>
+    {% endfor %}
+</div>
+
 {% if items %}
 <div class="auction-grid">
   {% for item in items %}
@@ -24,7 +35,10 @@
       {% endif %}
     </div>
     <div class="card-body">
-      <div class="card-category">Auction #{{ item.id }}</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+        <div class="card-category">Auction #{{ item.id }}</div>
+        <div style="font-size:0.65rem; background:rgba(255,255,255,0.1); padding:0.2rem 0.5rem; border-radius:10px; opacity:0.6;">{{ item.category }}</div>
+      </div>
       <h3 class="card-title">{{ item.title }}</h3>
       <p class="card-seller">Listed by <strong>{{ item.seller_name }}</strong></p>
       <div class="card-price-row">
@@ -55,6 +69,46 @@
   {% if session.get('role') in ['seller', 'admin'] %}
   <a href="{{ url_for('list_item') }}" class="btn btn-primary" style="margin-top:1.5rem;">＋ List Your First Item</a>
   {% endif %}
+</div>
+{% endif %}
+
+{% if closed_items %}
+<div style="margin-top:4rem;">
+  <h2 style="margin-bottom:1.5rem;font-size:1.5rem;display:flex;align-items:center;gap:0.75rem;">
+    🏁 Recently Closed Auctions
+  </h2>
+  <div class="auction-grid">
+    {% for item in closed_items %}
+    <div class="auction-card closed" style="opacity:0.8; filter:grayscale(0.4);">
+      <div class="card-img">
+        {% if item.image_url %}
+        <img src="{{ item.image_url }}" alt="{{ item.title }}" class="auction-img">
+        {% else %}
+        🏷️
+        {% endif %}
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fca5a5;">CLOSED</div>
+      </div>
+      <div class="card-body">
+        <h3 class="card-title">{{ item.title }}</h3>
+        <div class="card-price-row">
+          <div>
+            <div class="card-price-label">Winning Bid</div>
+            <div class="card-price" style="color:#6ee7b7;"><sup>₹</sup>{{ '%.2f' % item.current_price }}</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="card-price-label">Winner</div>
+            <div style="font-weight:700;color:#6ee7b7;">{{ item.winner_name or 'No Bids' }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="{{ url_for('item_detail', item_id=item.id) }}" class="btn btn-outline btn-sm" style="width:100%;justify-content:center;">
+          View Details →
+        </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
 </div>
 {% endif %}
 {% endblock %}

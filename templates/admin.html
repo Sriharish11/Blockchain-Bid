@@ -76,7 +76,7 @@
   <div class="table-wrapper">
     <table>
       <thead>
-        <tr><th>ID</th><th>Title</th><th>Seller</th><th>Starting</th><th>Current</th><th>Status</th><th>Expires</th><th>Action</th></tr>
+        <tr><th>ID</th><th>Title</th><th>Seller</th><th>Category</th><th>Starting</th><th>Current</th><th>Status</th><th>Expires</th><th>Action</th></tr>
       </thead>
       <tbody>
         {% for item in items %}
@@ -88,14 +88,39 @@
             </a>
           </td>
           <td style="opacity:0.7;">{{ item.seller_name }}</td>
+          <td>
+            <form action="{{ url_for('admin_update_category', item_id=item.id) }}" method="POST" style="display:flex; align-items:center; gap:0.5rem;">
+              <select name="category" class="form-control" style="padding: 0.2rem; font-size: 0.75rem; min-width: 100px;">
+                <option {% if item.category == 'Electronics' %}selected{% endif %}>Electronics</option>
+                <option {% if item.category == 'Fashion' %}selected{% endif %}>Fashion</option>
+                <option {% if item.category == 'Home & Garden' %}selected{% endif %}>Home & Garden</option>
+                <option {% if item.category == 'Collectibles' %}selected{% endif %}>Collectibles</option>
+                <option {% if item.category == 'Art' %}selected{% endif %}>Art</option>
+                <option {% if item.category == 'Vehicles' %}selected{% endif %}>Vehicles</option>
+                <option {% if item.category == 'Real Estate' %}selected{% endif %}>Real Estate</option>
+                <option {% if item.category == 'Other' %}selected{% endif %}>Other</option>
+              </select>
+              <button type="submit" class="btn btn-sm btn-primary" style="padding:0.2rem 0.4rem; font-size:0.7rem;">Save</button>
+            </form>
+          </td>
           <td>₹{{ '%.2f' % item.starting_price }}</td>
           <td style="font-weight:700;color:white;">₹{{ '%.2f' % item.current_price }}</td>
           <td><span class="badge badge-{{ item.status }}">{{ item.status | upper }}</span></td>
           <td style="font-size:0.75rem;opacity:0.5;">{{ item.expires_at[:16] }}</td>
-          <td>
+          <td style="display:flex; gap:0.5rem; align-items:center;">
+            {% if item.status == 'active' %}
+            <form action="{{ url_for('stop_bid', item_id=item.id) }}" method="POST" onsubmit="return confirm('Stop this bid?')">
+              <button type="submit" class="btn btn-sm" style="background:#ef4444; color:white; border:none; padding:0.3rem 0.6rem; border-radius:4px; font-size:0.7rem; cursor:pointer;">Stop</button>
+            </form>
+            <button type="button" class="btn btn-outline btn-sm" onclick="this.nextElementSibling.style.display='block'; this.style.display='none'" style="font-size:0.7rem;">Edit</button>
+            <form action="{{ url_for('edit_expiry', item_id=item.id) }}" method="POST" style="display:none;">
+                <input type="datetime-local" name="expires_at" required style="font-size:0.7rem; padding:0.2rem; border-radius:4px; border:1px solid rgba(255,255,255,0.2); background:rgba(0,0,0,0.3); color:white;">
+                <button type="submit" class="btn btn-sm btn-primary" style="font-size:0.7rem; padding:0.2rem 0.4rem;">OK</button>
+            </form>
+            {% endif %}
             <form method="POST" action="{{ url_for('admin_delete_item', item_id=item.id) }}" style="display:inline;">
               <button type="submit" class="btn btn-danger btn-sm"
-                data-confirm="Are you sure you want to delete '{{ item.title }}'? This cannot be undone.">
+                data-confirm="Are you sure you want to delete '{{ item.title }}'? This cannot be undone." style="font-size:0.7rem;">
                 Delete
               </button>
             </form>

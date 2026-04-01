@@ -69,6 +69,38 @@ function initCountdownTimers() {
 
   tick();
   setInterval(tick, 1000);
+  
+  // Also poll for price updates every 5 seconds on detail page
+  const bidForm = document.getElementById('bid-form');
+  if (bidForm) {
+    const itemId = bidForm.dataset.itemId;
+    const priceDisplay = document.getElementById('current-price-display');
+    const bidInput     = document.getElementById('bid-amount');
+
+    setInterval(async () => {
+      try {
+        const res = await fetch(`/api/item/${itemId}/status`);
+        const data = await res.json();
+        if (data.current_price && priceDisplay) {
+          const newPrice = `₹${data.current_price.toFixed(2)}`;
+          if (priceDisplay.textContent !== newPrice) {
+            priceDisplay.textContent = newPrice;
+            priceDisplay.style.animation = 'none';
+            priceDisplay.offsetHeight; // reflow
+            priceDisplay.style.animation = 'priceFlash 0.6s ease';
+            
+            // Update min bid if user is not currently typing
+            if (bidInput && document.activeElement !== bidInput) {
+              bidInput.min = (data.current_price + 0.01).toFixed(2);
+              bidInput.placeholder = `Min: ₹${(data.current_price + 0.01).toFixed(2)}`;
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Price poll error:', err);
+      }
+    }, 5000);
+  }
 }
 
 // ─── Toast Notifications ──────────────────────────────────────────────────────

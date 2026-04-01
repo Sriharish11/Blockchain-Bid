@@ -6,7 +6,10 @@
   <div>
     <a href="{{ url_for('dashboard') }}" style="color:rgba(255,255,255,0.5);text-decoration:none;font-size:0.85rem;font-weight:600;">← Back to Auctions</a>
     <h1 style="margin-top:0.4rem;">{{ item.title }}</h1>
-    <p class="page-subtitle">Listed by <strong>{{ item.seller_name }}</strong> • Auction #{{ item.id }}</p>
+    <p class="page-subtitle">
+      Listed by <strong>{{ item.seller_name }}</strong> • Auction #{{ item.id }} 
+      <span style="margin-left:1rem; padding:0.2rem 0.6rem; background:rgba(255,255,255,0.1); border-radius:12px; font-size:0.7rem;">📁 {{ item.category }}</span>
+    </p>
   </div>
   <span class="badge badge-{{ item.status }}">{{ item.status | upper }}</span>
 </div>
@@ -125,13 +128,36 @@
       <div class="hash-cell" id="latest-hash" style="word-break:break-all;font-size:0.72rem;"></div>
     </div>
 
-    {% elif session.get('user_id') == item.seller_id %}
+    {% elif item.status == 'active' and (session.get('user_id') == item.seller_id or session.get('role') == 'admin') %}
+    <div class="bid-separator"></div>
     <div style="text-align:center;padding:1rem;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:8px;font-size:0.82rem;color:#fcd34d;">
-      This is your listing
+      {% if session.get('user_id') == item.seller_id %}This is your listing{% else %}Admin Management{% endif %}
+      
+      <div style="margin-top:1rem; display:flex; flex-direction:column; gap:10px;">
+        <form action="{{ url_for('edit_expiry', item_id=item.id) }}" method="POST">
+            <label style="display:block; font-size:0.7rem; color:white; margin-bottom:5px;">Update Expiry Time:</label>
+            <input type="datetime-local" name="expires_at" class="form-control" required style="margin-bottom:5px;">
+            <button type="submit" class="btn btn-primary" style="width:100%; font-size:0.75rem;">Update Expiry</button>
+        </form>
+
+        <form action="{{ url_for('stop_bid', item_id=item.id) }}" method="POST" onsubmit="return confirm('Are you sure you want to stop this bid immediately?')">
+            <button type="submit" class="btn btn-danger" style="width:100%; font-size:0.75rem; background:#ef4444; border:none; color:white; padding:0.5rem; border-radius:8px; cursor:pointer;">Stop Bid Now</button>
+        </form>
+      </div>
     </div>
     {% else %}
-    <div style="text-align:center;padding:1rem;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;font-size:0.82rem;color:#fca5a5;">
-      Auction Closed
+    <div class="bid-separator"></div>
+    <div style="text-align:center;padding:1.5rem;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:12px;color:#fca5a5;">
+      <div style="font-weight:800; font-size:1.2rem; margin-bottom:0.5rem;">AUCTION CLOSED</div>
+      {% if bids and bids[0] %}
+        <div style="font-size:0.9rem; color:white;">
+          Winner: <strong style="color:#6ee7b7;">{{ bids[0].username }}</strong>
+          <br>
+          Winning Bid: <strong style="color:#6ee7b7;">₹{{ '%.2f' % bids[0].amount }}</strong>
+        </div>
+      {% else %}
+        <div style="font-size:0.85rem; opacity:0.7;">No winner (no bids placed)</div>
+      {% endif %}
     </div>
     {% endif %}
   </div>

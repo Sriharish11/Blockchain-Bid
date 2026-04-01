@@ -12,18 +12,37 @@
 
 <div style="max-width:600px;">
   <div class="glass-card" style="padding:2.5rem;">
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
       <div class="form-group">
         <label class="form-label">Item Title *</label>
         <input type="text" name="title" class="form-control" placeholder="e.g. Vintage Rolex Submariner 1962" required>
       </div>
       <div class="form-group">
+        <label class="form-label">Category *</label>
+        <select name="category" class="form-control" required>
+          <option value="Electronics">Electronics</option>
+          <option value="Fashion">Fashion</option>
+          <option value="Home & Garden">Home & Garden</option>
+          <option value="Collectibles">Collectibles</option>
+          <option value="Art">Art</option>
+          <option value="Vehicles">Vehicles</option>
+          <option value="Real Estate">Real Estate</option>
+          <option value="Other" selected>Other</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label class="form-label">Description</label>
         <textarea name="description" class="form-control" placeholder="Describe the item in detail..."></textarea>
       </div>
-      <div class="form-group">
-        <label class="form-label">Image URL (optional)</label>
-        <input type="url" name="image_url" class="form-control" placeholder="https://example.com/image.jpg">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label">Upload Image</label>
+          <input type="file" name="image_file" class="form-control" accept="image/*" style="padding:0.4rem;">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Or Image URL</label>
+          <input type="url" name="image_url" class="form-control" placeholder="https://example.com/image.jpg">
+        </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
         <div class="form-group">
